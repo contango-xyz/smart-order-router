@@ -25,6 +25,7 @@ export class Quote extends BaseCommand {
     tokenOut: flags.string({ char: 'o', required: true }),
     recipient: flags.string({ required: false }),
     amount: flags.string({ char: 'a', required: true }),
+    blockNumber: flags.string({ char: 'b', required: false }),
     exactIn: flags.boolean({ required: false }),
     exactOut: flags.boolean({ required: false }),
     protocols: flags.string({ required: false }),
@@ -66,8 +67,11 @@ export class Quote extends BaseCommand {
       forceMixedRoutes,
       simulate,
       debugRouting,
-      enableFeeOnTransferFeeFetching
+      enableFeeOnTransferFeeFetching,
+      blockNumber: blockNumberStr,
     } = flags;
+
+    const atBlockNumber = blockNumberStr ? Number(blockNumberStr) : this.blockNumber;
 
     const topNSecondHopForTokenAddress = new MapWithLowerCaseKey();
     topNSecondHopForTokenAddressRaw.split(',').forEach((entry) => {
@@ -137,7 +141,7 @@ export class Quote extends BaseCommand {
           }
           : undefined,
         {
-          blockNumber: this.blockNumber,
+          blockNumber: atBlockNumber,
           v3PoolSelection: {
             topN,
             topNTokenInOut,
@@ -174,7 +178,7 @@ export class Quote extends BaseCommand {
           }
           : undefined,
         {
-          blockNumber: this.blockNumber - 10,
+          blockNumber: atBlockNumber,
           v3PoolSelection: {
             topN,
             topNTokenInOut,
